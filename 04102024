@@ -1,0 +1,110 @@
+import java.util.ArrayList;
+import java.util.List;
+
+public class ElevatorSystem {
+
+    // Класс для представления лифта
+    static class Elevator {
+        private String id;
+        private int currentFloor;
+
+        public Elevator(String id, int currentFloor) {
+            this.id = id;
+            this.currentFloor = currentFloor;
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        public int getCurrentFloor() {
+            return currentFloor;
+        }
+
+        public void setCurrentFloor(int currentFloor) {
+            this.currentFloor = currentFloor;
+        }
+
+        @Override
+        public String toString() {
+            return "Лифт " + id + " на " + currentFloor + " этаже.";
+        }
+    }
+
+    // Класс для представления здания
+    static class Building {
+        private int totalFloors;
+        private List<Elevator> elevators;
+
+        public Building(int totalFloors, List<Elevator> elevators) {
+            this.totalFloors = totalFloors;
+            this.elevators = elevators;
+        }
+
+        /**
+         * Метод для запроса ближайшего лифта на указанный этаж.
+         *
+         * @param requestedFloor этаж, на который вызывается лифт
+         * @return выбранный лифт
+         */
+        public Elevator requestElevator(int requestedFloor) {
+            Elevator closestElevator = null;
+            int minDistance = Integer.MAX_VALUE;
+
+            for (Elevator elevator : elevators) {
+                int distance = Math.abs(elevator.getCurrentFloor() - requestedFloor);
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    closestElevator = elevator;
+                }
+            }
+
+            if (closestElevator != null) {
+                // Обновляем текущий этаж лифта
+                closestElevator.setCurrentFloor(requestedFloor);
+            }
+
+            return closestElevator;
+        }
+    }
+
+    public static void main(String[] args) {
+        // Создаем два лифта
+        Elevator elevatorA = new Elevator("A", 0);
+        Elevator elevatorB = new Elevator("B", 8);
+
+        // Добавляем лифты в список
+        List<Elevator> elevatorList = new ArrayList<>();
+        elevatorList.add(elevatorA);
+        elevatorList.add(elevatorB);
+
+        // Создаем здание с 19 этажами и двумя лифтами
+        Building building = new Building(19, elevatorList);
+
+        // Пример запроса на 1 этаж
+        int requestedFloor = 1;
+        Elevator assignedElevator = building.requestElevator(requestedFloor);
+
+        if (assignedElevator != null) {
+            System.out.println("Вызван лифт " + assignedElevator.getId() + " на " + requestedFloor + " этаж.");
+        } else {
+            System.out.println("Нет доступных лифтов.");
+        }
+
+        // Дополнительный пример запроса на 10 этаж
+        requestedFloor = 10;
+        assignedElevator = building.requestElevator(requestedFloor);
+
+        if (assignedElevator != null) {
+            System.out.println("Вызван лифт " + assignedElevator.getId() + " на " + requestedFloor + " этаж.");
+        } else {
+            System.out.println("Нет доступных лифтов.");
+        }
+
+        // Вывод текущего положения лифтов
+        System.out.println("\nТекущее положение лифтов:");
+        for (Elevator elevator : elevatorList) {
+            System.out.println(elevator);
+        }
+    }
+}
